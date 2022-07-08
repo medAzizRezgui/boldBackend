@@ -2,10 +2,9 @@ const express = require("express");
 const { body, validationResult } = require("express-validator");
 const router = express.Router();
 const User = require("../model/user");
-const _ = require("lodash");
 const bcrypt = require("bcrypt");
 
-//Auth 
+//Auth
 router.post(
   "/",
   [
@@ -29,9 +28,12 @@ router.post(
     if (!user) {
       return res.status(404).send("invalid email");
     }
-    const checkPassword = await  bcrypt.compare(req.body.password,user.password);
-    if(!checkPassword){
-        return res.status(404).send('invalid email or password');
+    const checkPassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
+    if (!checkPassword) {
+      return res.status(404).send("invalid email or password");
     }
     // if (req.body.password !=user.password) {
     //   return res.status(404).send("invalid email or password");
@@ -41,48 +43,45 @@ router.post(
   }
 );
 
-
 //Register
 router.post(
-    "/register",
-    [
-      body("email")
-        .trim()
-        .isEmail()
-        .withMessage("email must be a valid email ")
-        .normalizeEmail(),
-      body("password")
-        .trim()
-        .isLength(8)
-        .withMessage("password length short , min 8 char required"),
-    ],
-    async (req, res, next) => {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        console.log(errors);
-        return res.send(errors);
-      }
-      let user = await User.findOne({ email: req.body.email });
-  
-      if (user) {
-        return res.status(401).send("email already exist ");
-      }
-      user = new User({
-        email: req.body.email,
-        password: req.body.password,
-        
-      });
-      
-      const salt = await bcrypt.genSalt(10);
-      user.password = await bcrypt.hash(user.password, salt);
-      try {
-        const savedUser = await user.save();
-        const { SpecificItem } = _.pick(savedUser, ["_id", "email"]);
-        res.status(200).send("registered successfully ");
-      } catch (err) {
-        res.status(400).send({ err });
-      }
+  "/register",
+  [
+    body("email")
+      .trim()
+      .isEmail()
+      .withMessage("email must be a valid email ")
+      .normalizeEmail(),
+    body("password")
+      .trim()
+      .isLength(8)
+      .withMessage("password length short , min 8 char required"),
+  ],
+  async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      console.log(errors);
+      return res.send(errors);
     }
-  );
-  
+    let user = await User.findOne({ email: req.body.email });
+
+    if (user) {
+      return res.status(401).send("email already exist ");
+    }
+    user = new User({
+      email: req.body.email,
+      password: req.body.password,
+    });
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(user.password, salt);
+    try {
+      const savedUser = await user.save();
+      res.status(200).send("registered successfully ");
+    } catch (err) {
+      res.status(400).send({ err });
+    }
+  }
+);
+
 module.exports = router;
