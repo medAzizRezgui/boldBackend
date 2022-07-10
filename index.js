@@ -28,6 +28,8 @@ app.use(
 app.use(express.static("public"));
 app.use("/uploads", express.static("uploads"));
 
+
+
 app.use("/iiiijaMena", User);
 app.use("/categorie", Categorie);
 app.use("/sousCat", SousCategorie);
@@ -39,6 +41,9 @@ app.all("*", (req, res, next) => {
     message: "Page Note Found !",
   });
 });
+
+// const __dirname = path.resolve();
+// app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 
 if(process.env.NODE_ENV === 'development'){
 app.use(morgan('tiny'));

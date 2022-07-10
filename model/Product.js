@@ -9,7 +9,7 @@ const ProductSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Sous-Categorie",
   },
-  images:[{
+  files:[{
     originalname:String,
   }],
   price: {
@@ -17,5 +17,4 @@ const ProductSchema = new mongoose.Schema({
     required: true,
   },
 });
-
 module.exports = mongoose.model("Product", ProductSchema);

@@ -38,8 +38,7 @@ const upload = multer({
 //create product
 router.post("/add",upload, async (req, res) => {
   let filesArray = [];
-req.files.forEach(element => {
-
+  req.files.forEach(element => {
     const file = {
         originalname: element.originalname
     }
@@ -49,7 +48,7 @@ console.log(filesArray);
   const data = new Product({
     name: req.body.name,
     sousCategorie: req.body.sousCategorie,
-    images: filesArray,
+    files: filesArray,
     price: req.body.price,
   });
   try {
