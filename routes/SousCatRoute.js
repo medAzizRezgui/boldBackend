@@ -50,7 +50,7 @@ router.patch("/:souscatId", async (req, res) => {
     );
     res
       .status(200)
-      .send("updated successfully :" + updatedSousCategorie.acknowledged);
+      .send("updated  :" + updatedSousCategorie.acknowledged);
   } catch (err) {
     res.status(400).send({ message: err });
     console.log("mochkel fel update");

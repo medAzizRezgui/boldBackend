@@ -5,6 +5,8 @@ const router = express.Router();
 const Product = require("../model/Product");
 const multer = require("multer");
 const fs = require('fs')
+const path = require('path');
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     var dir ="./uploads/";
@@ -14,7 +16,9 @@ const storage = multer.diskStorage({
     cb(null, dir);
   },
   filename: function (req, file, cb) {
-    cb(null, file.originalname);
+    cb(null
+      // , file.originalname
+      ,`${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
   },
 });
 
@@ -24,6 +28,7 @@ const fileFilter = (req, file, cb) => {
     cb(null, true);
   } else {
     cb(null, false);
+    return "only image"
   }
 };
 
@@ -56,7 +61,7 @@ console.log(filesArray);
     console.log(savedProduct);
     res.status(200).send(savedProduct);
   } catch (err) {
-    console.log({ err });
+    console.log(err);
     res.status(400).send({ err });
   }
 });
@@ -105,13 +110,11 @@ router.patch("/:ProductId", async (req, res) => {
   try {
     const updatedProduct = await Product.updateOne(
       { _id: req.params.ProductId },
-      { $set: { price: req.body.price, name: req.body.name } }
+      { $set: { price: req.body.price , name: req.body.name  ,sousCategorie:req.body.sousCategorie, files :req.files} }
     );
-    res
-      .status(200)
-      .send("updated successfully : " + updatedProduct.acknowledged);
-    console.log(updatedProduct);
+    res.status(200).send("updated  : " + updatedProduct.acknowledged);
   } catch (err) {
+    console.log(err)
     res.status(400).send({ message: err });
   }
 });
