@@ -40,7 +40,7 @@ router.get("/:orderId", async (req, res) => {
 });
  
 
-router.patch("/updateDelevryStat/orderId",async (req,res)=>{
+router.patch("/deliver/orderId",async (req,res)=>{
   const order = await Order.findById(req.params.orderId);
   if (order) {
     order.isDelivered = true;
@@ -48,7 +48,21 @@ router.patch("/updateDelevryStat/orderId",async (req,res)=>{
     const updatedOrder = await order.save();
     res.json(updatedOrder);
   } else {
-    res.status(404).send('order not found');
+    res.status(404)
+    // .send('order not found');
+    throw new Error('Order not found');
+  }
+})
+router.patch("/pay/orderId",async (req,res)=>{
+  const order = await Order.findById(req.params.id);
+  if (order) {
+    order.isPaid = true;
+    order.paidAt = Date.now();
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
+  } else {
+    res.status(404);
+    throw new Error('Order not found');
   }
 })
 
