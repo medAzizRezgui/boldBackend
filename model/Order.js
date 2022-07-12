@@ -8,7 +8,7 @@ const OrderSchema = new mongoose.Schema({
   shippingAddress: {
     region: { type: String, required: true },
     city: { type: String, required: true },
-    postalCode: { type: String, required: true },
+    postalCode: { type: Number, required: true },
     street: { type: String, required: true },
   },
   phoneNumber: {
@@ -21,7 +21,6 @@ const OrderSchema = new mongoose.Schema({
     {
       name: { type: String, required: true },
       qty: { type: Number, required: true },
-      image: { type: String, required: true },
       price: { type: Number, required: true },
       Product: {
         type: mongoose.Schema.Types.ObjectId,

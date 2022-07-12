@@ -10,6 +10,7 @@ const User = require("./routes/UserRouter");
 const Categorie = require("./routes/CategorieRoute");
 const SousCategorie = require("./routes/SousCatRoute");
 const Product = require("./routes/ProductRouter");
+const Order = require('./routes/OrderRoute')
 
 mongoose
   .connect(process.env.DB_CONNECTION, {
@@ -47,6 +48,7 @@ app.use("/iiiijaMena", User);
 app.use("/categorie", Categorie);
 app.use("/sousCat", SousCategorie);
 app.use("/Product", Product);
+app.use("/order", Order);
 // page not found
 app.all("*", (req, res, next) => {
   res.status(404).json({
@@ -55,8 +57,5 @@ app.all("*", (req, res, next) => {
   });
 });
 
-
-
-
 const port = process.env.port || 3000;
-app.listen(3000, () => console.log("app working on port " + port + "..."));
+app.listen(5000, () => console.log("app working on port " + port + "..."));

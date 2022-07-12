@@ -13,6 +13,7 @@ if (Products && Products.length === 0) {
     shippingAddress,
     phoneNumber,
     Products,
+    // totalPrice
   });
   const createdorder = await NewOrder.save();
   res.status(201).json(createdorder);
@@ -30,7 +31,7 @@ router.get("/getall", async (req, res) => {
 });
 
 
-router.get("/:orderId", async (req, res) => {
+router.get("/get/:orderId", async (req, res) => {
   try {
     const data = await Order.findById(req.params.orderId)
     res.status(200).send(data);
@@ -40,7 +41,7 @@ router.get("/:orderId", async (req, res) => {
 });
  
 
-router.patch("/deliver/orderId",async (req,res)=>{
+router.patch("/deliver/:orderId",async (req,res)=>{
   const order = await Order.findById(req.params.orderId);
   if (order) {
     order.isDelivered = true;
@@ -49,12 +50,11 @@ router.patch("/deliver/orderId",async (req,res)=>{
     res.json(updatedOrder);
   } else {
     res.status(404)
-    // .send('order not found');
     throw new Error('Order not found');
   }
 })
-router.patch("/pay/orderId",async (req,res)=>{
-  const order = await Order.findById(req.params.id);
+router.patch("/pay/:orderId",async (req,res)=>{
+  const order = await Order.findById(req.params.orderId);
   if (order) {
     order.isPaid = true;
     order.paidAt = Date.now();
