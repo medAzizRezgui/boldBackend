@@ -100,6 +100,7 @@ router.delete("/delete/:ProductId", async (req, res) => {
       _id: req.params.ProductId,
     });
     res.status(200).send("deleted");
+    console.log(removedProduct)
   } catch (err) {
     res.status(400).send({ message: err });
   }
@@ -110,9 +111,10 @@ router.patch("/:ProductId", async (req, res) => {
   try {
     const updatedProduct = await Product.updateOne(
       { _id: req.params.ProductId },
-      { $set: { price: req.body.price , name: req.body.name  ,sousCategorie:req.body.sousCategorie, files :req.files} }
+      { $set: { price: req.body.price , name: req.body.name  ,sousCategorie:req.body.sousCategorie } }
     );
-    res.status(200).send("updated  : " + updatedProduct.acknowledged);
+    console.log()
+    res.status(200).send("updated : " + updatedProduct.acknowledged);
   } catch (err) {
     console.log(err)
     res.status(400).send({ message: err });

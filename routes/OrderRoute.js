@@ -13,7 +13,7 @@ if (Products && Products.length === 0) {
     shippingAddress,
     phoneNumber,
     Products,
-    // totalPrice
+  
   });
   const createdorder = await NewOrder.save();
   res.status(201).json(createdorder);

@@ -58,4 +58,4 @@ app.all("*", (req, res, next) => {
 });
 
 const port = process.env.port || 3000;
-app.listen(5000, () => console.log("app working on port " + port + "..."));
+app.listen(port, () => console.log("app working on port " + port + "..."));
