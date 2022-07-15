@@ -4,6 +4,8 @@ const router = express.Router();
 const User = require("../model/user");
 const bcrypt = require("bcrypt");
 
+
+
 //Auth
 router.post(
   "/",
@@ -36,7 +38,7 @@ router.post(
       return res.status(404).send("invalid email or password");
     }
     const token = user.generateTokens();
-    return res.status(200).json({ token });
+    return res.status(200).json(token);
   }
 );
 
@@ -66,6 +68,7 @@ router.post(
       return res.status(401).send("email already exist ");
     }
     user = new User({
+      fullName:req.body.fullName,
       email: req.body.email,
       password: req.body.password,
     });
@@ -80,5 +83,18 @@ router.post(
     }
   }
 );
+
+// update product 
+router.patch("/updatePassword/:userId", async (req,res)=>{
+  try {
+    const {userId} = req.params
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(req.body.password,salt)
+    const userPassword = await User.findByIdAndUpdate({_id:userId},{password:hashPassword},{new:true })
+    return res.status(200).json({status:true , data:userPassword})
+  } catch (error) {
+    return res.status(400).json({ status:false ,msg:"error occured! "})
+  }
+})
 
 module.exports = router;

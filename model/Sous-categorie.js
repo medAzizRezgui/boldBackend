@@ -9,6 +9,6 @@ const SousCategorieSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Categorie",
   },
-});
+}, { timestamps: true });
 
 module.exports = mongoose.model("Sous-Categorie", SousCategorieSchema);

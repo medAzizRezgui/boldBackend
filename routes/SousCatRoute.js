@@ -3,6 +3,8 @@ require("express-async-errors");
 require("dotenv").config();
 const router = express.Router();
 const SousCategorie = require("../model/Sous-categorie");
+const auth = require('../middleware/auth')
+const admin = require('../middleware/admin')
 
 router.post("/add", async (req, res) => {
   const data = new SousCategorie({

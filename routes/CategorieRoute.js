@@ -2,9 +2,10 @@ const express = require("express");
 require("express-async-errors");
 const router = express.Router();
 const categorie = require("../model/Categorie");
-
+const auth = require('../middleware/auth')
+const admin = require('../middleware/admin')
 // add CATEGORIE
-router.post("/add", async (req, res) => {
+router.post("/add", [auth,admin],async (req, res) => {
   const data = new categorie({
     name: req.body.name,
   });
@@ -17,7 +18,7 @@ router.post("/add", async (req, res) => {
 });
 
 //get all categorie
-router.get("/getall", async (req, res) => {
+router.get("/getall",[auth,admin], async (req, res) => {
   try {
     const data = await categorie.find();
     res.status(200).send(data);
@@ -27,7 +28,7 @@ router.get("/getall", async (req, res) => {
 });
 
 //get categorie by id
-router.get("/:catId", async (req, res) => {
+router.get("/:catId", [auth,admin],async (req, res) => {
   try {
     const data = await categorie.findById(req.params.catId);
     res.status(200).send(data);
@@ -37,7 +38,7 @@ router.get("/:catId", async (req, res) => {
 });
 
 //delete categorie
-router.delete("/delete/:catId", async (req, res) => {
+router.delete("/delete/:catId",[auth,admin], async (req, res) => {
   try {
     const removedCategorie = await categorie.deleteOne({
       _id: req.params.catId,
@@ -49,7 +50,7 @@ router.delete("/delete/:catId", async (req, res) => {
 });
 
 //update categorie
-router.patch("/:catId", async (req, res) => {
+router.patch("/:catId", [auth,admin], async (req, res) => {
   try {
     const updatedCategorie = await categorie.updateOne(
       { _id: req.params.catId },

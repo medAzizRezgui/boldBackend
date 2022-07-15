@@ -6,6 +6,8 @@ const Product = require("../model/Product");
 const multer = require("multer");
 const fs = require('fs')
 const path = require('path');
+const auth = require('../middleware/auth')
+const admin = require('../middleware/admin')
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -94,7 +96,7 @@ router.get("/:ProdId", async (req, res) => {
 });
 
 //delete produt
-router.delete("/delete/:ProductId", async (req, res) => {
+router.delete("/delete/:ProductId", [auth,admin],async (req, res) => {
   try {
     const removedProduct = await Product.deleteOne({
       _id: req.params.ProductId,
@@ -107,17 +109,35 @@ router.delete("/delete/:ProductId", async (req, res) => {
 });
 
 //update product
-router.patch("/:ProductId", async (req, res) => {
+router.patch("/:ProductId",[auth,admin],upload, async (req, res) => {
+  let filesArray = [];
+  req.files.forEach(element => {
+    const file = {
+        originalname: element.originalname
+    }
+    filesArray.push(file);
+});
+
+  var updates={
+    name: req.body.name ,
+    price: req.body.price ,
+    sousCategorie:req.body.sousCategorie,
+    countInStock : req.body.countInStock,
+    rating:req.body.rating,
+    files:filesArray,
+  }
   try {
     const updatedProduct = await Product.updateOne(
-      { _id: req.params.ProductId },
-      { $set: { price: req.body.price , name: req.body.name  ,sousCategorie:req.body.sousCategorie } }
+      {_id: req.params.ProductId},
+      { $set: updates},
+      {new:true}
     );
     console.log()
-    res.status(200).send("updated : " + updatedProduct.acknowledged);
+    res.status(200).json({msg : "updated"});
+    console.log(updatedProduct);
   } catch (err) {
     console.log(err)
-    res.status(400).send({ message: err });
+    res.status(400).json({ msg: err.message });
   }
 });
 module.exports = router;
