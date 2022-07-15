@@ -57,6 +57,7 @@ console.log(filesArray);
     sousCategorie: req.body.sousCategorie,
     files: filesArray,
     price: req.body.price,
+    countInStock:req.body.countInStock
   });
   try {
     const savedProduct = await data.save();
@@ -122,8 +123,8 @@ router.patch("/:ProductId",[auth,admin],upload, async (req, res) => {
     name: req.body.name ,
     price: req.body.price ,
     sousCategorie:req.body.sousCategorie,
-    countInStock : req.body.countInStock,
     rating:req.body.rating,
+    countInStock:req.body.countInStock,
     files:filesArray,
   }
   try {
