@@ -50,6 +50,7 @@ const upload = multer({
 
 //create product
 router.post("/add", upload, async (req, res) => {
+  
   let filesArray = [];
   req.files.forEach((element) => {
     const file = {
@@ -124,7 +125,9 @@ router.patch("/:ProductId", [auth, admin], upload, async (req, res) => {
     };
     filesArray.push(file);
   });
+  
   const { Name, Price, SousCategorie, Rating, CountInStock } = req.body;
+  const files = req.files
   const product = await Product.findById(req.params.ProductId);
   if (product) {
     product.name = Name || product.name;
@@ -132,9 +135,10 @@ router.patch("/:ProductId", [auth, admin], upload, async (req, res) => {
     product.sousCategorie = SousCategorie || product.sousCategorie;
     product.rating = Rating || product.rating;
     product.countInStock = CountInStock || product.countInStock;
-    if(req.files){
-      product.files = filesArray ;
-    }
+    if(files.length >0){
+      product.files = filesArray
+    }else product.files;
+    
     const updatedProduct = await product.save();
     res.json(updatedProduct);
   } else {
