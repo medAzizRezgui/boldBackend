@@ -60,8 +60,7 @@ router.patch("/:catId", [auth,admin], async (req, res) => {
       .status(200)
       .send("updated :" + updatedCategorie.acknowledged);
   } catch (err) {
-    res.status(400).send({ message: err });
-    console.log("mochkel fel update");
+    res.status(400).json({ message: err.message });
   }
 });
 
