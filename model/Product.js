@@ -5,7 +5,6 @@ const ProductSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
-    unique:true,
   },
   sousCategorie: {
     type: mongoose.Schema.Types.ObjectId,

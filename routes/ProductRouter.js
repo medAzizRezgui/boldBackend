@@ -50,7 +50,6 @@ const upload = multer({
 
 //create product
 router.post("/add", upload, async (req, res) => {
-  
   let filesArray = [];
   req.files.forEach((element) => {
     const file = {
@@ -125,26 +124,44 @@ router.patch("/:ProductId", [auth, admin], upload, async (req, res) => {
     };
     filesArray.push(file);
   });
-  
-  const { Name, Price, SousCategorie, Rating, CountInStock } = req.body;
-  const files = req.files
-  const product = await Product.findById(req.params.ProductId);
-  if (product) {
-    product.name = Name || product.name;
-    product.price = Price || product.price;
-    product.sousCategorie = SousCategorie || product.sousCategorie;
-    product.rating = Rating || product.rating;
-    product.countInStock = CountInStock || product.countInStock;
-    if(files.length >0){
-      product.files = filesArray
-    }else product.files;
-    
-    const updatedProduct = await product.save();
-    res.json(updatedProduct);
-  } else {
-    res.status(404);
-    throw new Error("Product not found");
+  try {
+    const updatedProduct = await Product.findByIdAndUpdate(
+      { _id: req.params.ProductId },
+      {
+        $set: {
+          name: req.body.name ,
+          price: req.body.price ,
+          sousCategorie: req.body.sousCategorie  ,
+          rating: req.body.rating ,
+          countInStock: req.body.countInStock  ,
+          files: filesArray ,
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json({ msg: "updated" });
+    console.log(updatedProduct);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ msg: err.message });
   }
+  // const { Name, Price, SousCategorie, Rating, CountInStock } = req.body;
+  // const product = await Product.findById(req.params.ProductId);
+  // if (product) {
+  //   product.name = Name || product.name;
+  //   product.price = Price || product.price;
+  //   product.sousCategorie = SousCategorie || product.sousCategorie;
+  //   product.rating = Rating || product.rating;
+  //   product.countInStock = CountInStock || product.countInStock;
+  //   if(req.files){
+  //     product.files = filesArray ;
+  //   }
+  //   const updatedProduct = await product.save();
+  //   res.json(updatedProduct);
+  // } else {
+  //   res.status(404);
+  //   throw new Error("Product not found");
+  // }
   // var updates={
   //   name: req.body.name ,
   //   price: req.body.price ,
@@ -154,27 +171,7 @@ router.patch("/:ProductId", [auth, admin], upload, async (req, res) => {
   //   files:filesArray,
   // }
 
-  // try {
-  //   const updatedProduct = await Product.findByIdAndUpdate(
-  //     { _id: req.params.ProductId },
-  //     {
-  //       $set: {
-  //         name: req.body.name ,
-  //         price: req.body.price ,
-  //         sousCategorie: req.body.sousCategorie  ,
-  //         rating: req.body.rating ,
-  //         countInStock: req.body.countInStock  ,
-  //         files: filesArray ,
-  //       },
-  //     },
-  //     { new: true }
-  //   );
-  //   res.status(200).json({ msg: "updated" });
-  //   console.log(updatedProduct);
-  // } catch (err) {
-  //   console.log(err);
-  //   res.status(400).json({ msg: err.message });
-  // }
+  
 });
 
 module.exports = router;
