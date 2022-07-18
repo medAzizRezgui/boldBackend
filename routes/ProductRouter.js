@@ -20,7 +20,6 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     cb(
       null,
-      // , file.originalname
       file.originalname
     );
   },
@@ -59,11 +58,11 @@ router.post("/add", upload, async (req, res) => {
   });
   console.log(filesArray);
   const data = new Product({
-    name: req.body.name,
-    sousCategorie: req.body.sousCategorie,
+    name: req.body.Name,
+    sousCategorie: req.body.SousCategorie,
     files: filesArray,
-    price: req.body.price,
-    countInStock: req.body.countInStock,
+    price: req.body.Price,
+    countInStock: req.body.CountInStock,
   });
   try {
     const savedProduct = await data.save();
@@ -103,7 +102,7 @@ router.get("/:ProdId", async (req, res) => {
 });
 
 //delete produt
-router.delete("/delete/:ProductId", [auth, admin], async (req, res) => {
+router.delete("/delete/:ProductId", async (req, res) => {
   try {
     const removedProduct = await Product.deleteOne({
       _id: req.params.ProductId,
@@ -116,7 +115,7 @@ router.delete("/delete/:ProductId", [auth, admin], async (req, res) => {
 });
 
 //update product
-router.patch("/:ProductId", [auth, admin], upload, async (req, res) => {
+router.patch("/:ProductId",  upload, async (req, res) => {
   let filesArray = [];
   req.files.forEach((element) => {
     const file = {
@@ -124,18 +123,31 @@ router.patch("/:ProductId", [auth, admin], upload, async (req, res) => {
     };
     filesArray.push(file);
   });
+
+  if(req.files){
+    var updates={
+      name: req.body.Name ,
+      price: req.body.Price ,
+      sousCategorie:req.body.SousCategorie,
+      rating:req.body.Rating,
+      countInStock:req.body.CountInStock,
+      files:filesArray,
+    }
+  }else{
+    var updates={
+      name: req.body.Name ,
+      price: req.body.Price ,
+      sousCategorie:req.body.SousCategorie,
+      rating:req.body.Rating,
+      countInStock:req.body.CountInStock,
+    }
+  }
+
   try {
     const updatedProduct = await Product.findByIdAndUpdate(
       { _id: req.params.ProductId },
       {
-        $set: {
-          name: req.body.name ,
-          price: req.body.price ,
-          sousCategorie: req.body.sousCategorie  ,
-          rating: req.body.rating ,
-          countInStock: req.body.countInStock  ,
-          files: filesArray ,
-        },
+        $set: updates,
       },
       { new: true }
     );
@@ -162,14 +174,7 @@ router.patch("/:ProductId", [auth, admin], upload, async (req, res) => {
   //   res.status(404);
   //   throw new Error("Product not found");
   // }
-  // var updates={
-  //   name: req.body.name ,
-  //   price: req.body.price ,
-  //   sousCategorie:req.body.sousCategorie,
-  //   rating:req.body.rating,
-  //   countInStock:req.body.countInStock,
-  //   files:filesArray,
-  // }
+  
 
   
 });

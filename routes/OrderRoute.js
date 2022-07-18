@@ -6,16 +6,17 @@ const auth = require('../middleware/auth')
 const admin = require('../middleware/admin')
 
 router.post('/addOrder', async (req,res)=>{
-const {fullname,shippingAddress,phoneNumber,Products,totalPrice} = req.body;
+const {fullname,shippingAddress,phoneNumber,Products,totalPrice,email} = req.body;
 if (Products && Products.length === 0) {
   res.status(400).send("no orders items");
 } else {
   const NewOrder = new Order({
     fullname,
+    email,
     shippingAddress,
     phoneNumber,
     Products,
-    totalPrice
+    totalPrice 
   });
   const createdOrder = await NewOrder.save();
   res.status(201).json(createdOrder);
@@ -23,7 +24,7 @@ if (Products && Products.length === 0) {
 }
 )
 
-router.get("/getall", [auth],async (req, res) => {
+router.get("/getall", async (req, res) => {
   try {
     const data = await Order.find()
     res.status(200).send(data);
@@ -33,7 +34,7 @@ router.get("/getall", [auth],async (req, res) => {
 });
 
 
-router.get("/get/:orderId",[auth], async (req, res) => {
+router.get("/get/:orderId", async (req, res) => {
   try {
     const data = await Order.findById(req.params.orderId)
     res.status(200).send(data);
@@ -43,7 +44,7 @@ router.get("/get/:orderId",[auth], async (req, res) => {
 });
  
 
-router.patch("/deliver/:orderId",[auth],async (req,res)=>{
+router.patch("/deliver/:orderId",async (req,res)=>{
   const order = await Order.findById(req.params.orderId);
   if (order) {
     order.isDelivered = true;
@@ -55,7 +56,7 @@ router.patch("/deliver/:orderId",[auth],async (req,res)=>{
     throw new Error('Order not found');
   }
 })
-router.patch("/pay/:orderId",[auth],async (req,res)=>{
+router.patch("/pay/:orderId",async (req,res)=>{
   const order = await Order.findById(req.params.orderId);
   if (order) {
     order.isPaid = true;
@@ -67,13 +68,4 @@ router.patch("/pay/:orderId",[auth],async (req,res)=>{
     throw new Error('Order not found');
   }
 })
-
-
-
-
-
-
-
-
-
 module.exports = router;
