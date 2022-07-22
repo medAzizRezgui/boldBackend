@@ -37,7 +37,7 @@ router.post(
       return res.status(404).send("invalid email or password");
     }
     const token = user.generateTokens();
-    return res.status(200).json({data : {token, user }, success : true});
+    return res.status(200).json(token);
   }
 );
 
