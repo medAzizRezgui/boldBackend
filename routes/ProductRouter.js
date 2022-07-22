@@ -8,47 +8,53 @@ const fs = require("fs");
 const path = require("path");
 const auth = require("../middleware/auth");
 const admin = require("../middleware/admin");
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    var dir = "./uploads/";
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir);
-    }
-    cb(null, dir);
-  },
-  filename: function (req, file, cb) {
-    cb(
-      null,
-      file.originalname
-    );
-  },
-});
-
-const fileFilter = (req, file, cb) => {
-  // reject a file
-  if (
-    file.mimetype === "image/jpeg" ||
-    file.mimetype === "image/png" ||
-    file.mimetype === "image/jpg"
-  ) {
-    cb(null, true);
-  } else {
-    cb(null, false);
-    return "only image";
-  }
-};
-
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 10, // 10MB
-  },
-  fileFilter: fileFilter,
-}).array("files", 5);
+const Upload = require('../utils/upload');
+const upload = require("../helper/helper").upload;
+const vm = require("v-response");
+const _ = require("underscore");
 
 //create product
-router.post("/add", upload, async (req, res) => {
+router.post("/add", Upload.array("files",6), async (req, res,next) => {
+  if (!req.files || _.isEmpty(req.files)) {
+    return res.status(400)
+        .json(vm.ApiResponse(false, 400, "No file uploaded'"))
+}
+const files = req.files;
+try {
+    let urls = [];
+    let multiple = async (path) => await upload(path);
+    for (const file of files) {
+        const {path} = file;
+        console.log("path", file);
+
+        const newPath = await multiple(path);
+        urls.push(newPath);
+        fs.unlinkSync(path);
+    }
+    if (urls) {
+        let body = req.body;
+        let bodyw = _.extend(body, {files: urls});
+        let new_Product = new Product(bodyw);
+        await new_Product.save()
+            .then(saved => {
+                return res.json({saved});
+            }).catch(error => {
+                return res.json({msg : error.message});
+            })
+
+    }
+    if (!urls) {
+        return res.status(400)
+            .json(vm.ApiResponse(false, 400, ""))
+    }
+
+} catch (e) {
+    console.log("err :", e.message);
+    return next(e);
+}
+});
+
+router.post("/AddProd", Upload.array("files",6), async (req, res) => {
   let filesArray = [];
   req.files.forEach((element) => {
     const file = {
@@ -115,16 +121,17 @@ router.delete("/delete/:ProductId", async (req, res) => {
 });
 
 //update product
-router.patch("/:ProductId",  upload, async (req, res) => {
-  let filesArray = [];
+router.patch("/:ProductId",  Upload.array("files",6), async (req, res) => {
+  
+
+  if(req.files){
+    let filesArray = [];
   req.files.forEach((element) => {
     const file = {
       originalname: element.originalname,
     };
     filesArray.push(file);
-  });
-
-  if(req.files){
+  }); 
     var updates={
       name: req.body.Name ,
       price: req.body.Price ,
@@ -178,5 +185,36 @@ router.patch("/:ProductId",  upload, async (req, res) => {
 
   
 });
-
+// async function uploadToCloudinary(locaFilePath) {
+  
+//     // locaFilePath: path of image which was just
+//     // uploaded to "uploads" folder
+  
+//     var mainFolderName = "main";
+//     // filePathOnCloudinary: path of image we want
+//     // to set when it is uploaded to cloudinary
+//     var filePathOnCloudinary = 
+//         mainFolderName + "/" + locaFilePath;
+  
+//     return cloudinary.uploader.upload(locaFilePath, { public_id: filePathOnCloudinary })
+//         .then((result) => {
+  
+//             // Image has been successfully uploaded on
+//             // cloudinary So we dont need local image 
+//             // file anymore
+//             // Remove file from local uploads folder
+//             fs.unlinkSync(locaFilePath);
+  
+//             return {
+//                 message: "Success",
+//                 url: result.url,
+//             };
+//         })
+//         .catch((error) => {
+  
+//             // Remove file from local uploads folder
+//             fs.unlinkSync(locaFilePath);
+//             return { message: "Fail" };
+//         });
+// }
 module.exports = router;

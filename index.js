@@ -28,6 +28,8 @@ app.use(
     origin: ['http://localhost:4200','http://localhost:3000'],
   })
 );
+// app.use(express.static(__dirname + "/public"));
+// app.use("/uploads", express.static("uploads"));
 
 // app.use(express.static("public"));
 // app.use("/uploads", express.static("uploads"));

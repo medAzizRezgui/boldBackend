@@ -5,14 +5,15 @@ const ProductSchema = new mongoose.Schema({
   name: {
     type: String,
     required: true,
+    unique : false
   },
   sousCategorie: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Sous-Categorie",
   },
-  files:[{
-    originalname:String,
-  }],
+  files:{
+    type: []
+  },
   price: {
     type: Number,
     required: true,

@@ -5,7 +5,7 @@ const categorie = require("../model/Categorie");
 const auth = require('../middleware/auth')
 const admin = require('../middleware/admin')
 // add CATEGORIE
-router.post("/add", async (req, res) => {
+router.post("/add",[auth,admin], async (req, res) => {
   const data = new categorie({
     name: req.body.name,
   });
