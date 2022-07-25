@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 
+
 const OrderSchema = new mongoose.Schema({
   fullname: {
     type: String,
@@ -26,7 +27,6 @@ const OrderSchema = new mongoose.Schema({
       name: { type: String, required: true },
       qty: { type: Number, required: true },
       item_price: { type: Number, required: true },
-      image:{type: String, required: true},
       Product: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -49,10 +49,13 @@ const OrderSchema = new mongoose.Schema({
   paidAt: {
     type: Date
   },
-  codeCoupon: {
-    type: Number, required: true, min:0 , max:100 , default: 0
+  coupon: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "discout_code",
   },
-
+  finalPrice: {
+    type: Number, required: true, default: 0.0
+  },
 },
 { timestamps: true });
 

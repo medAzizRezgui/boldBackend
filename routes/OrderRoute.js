@@ -6,17 +6,22 @@ const auth = require('../middleware/auth')
 const admin = require('../middleware/admin')
 
 router.post('/addOrder', async (req,res)=>{
-const {fullname,shippingAddress,phoneNumber,Products,totalPrice,email} = req.body;
+const {fullname,shippingAddress,phoneNumber,Products,email,coupon} = req.body;
 if (Products && Products.length === 0) {
   res.status(400).send("no orders items");
 } else {
+  let som =0;
+  Products.forEach(element => {
+    som =som +( (element.item_price) * (element.qty))
+  })
   const NewOrder = new Order({
     fullname,
     email,
     shippingAddress,
     phoneNumber,
     Products,
-    totalPrice 
+    totalPrice : som,
+    coupon,
   });
   const createdOrder = await NewOrder.save();
   res.status(201).json(createdOrder);

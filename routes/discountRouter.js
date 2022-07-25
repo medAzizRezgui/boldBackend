@@ -1,0 +1,49 @@
+const express = require("express");
+require("express-async-errors");
+const router = express.Router();
+const discount = require("../model/discount")
+
+
+router.post("/add", async (req, res) => {
+    const data = new discount({
+      name: req.body.name,
+      percent: req.body.percent,
+    });
+    try {
+      const saveddiscount = await data.save();
+      res.status(200).send(saveddiscount);
+    } catch (err) {
+      res.status(400).send({ err });
+    }
+  });
+
+
+//   router.patch("/enabled/:Id",  async (req, res) => {
+//     try {
+//       const updateddiscount = await discount.updateOne(
+//         { _id: req.params.Id },
+//         { $set: { isActive: false } }
+//       );
+//       res
+//         .status(200)
+//         .send("updated :" + updateddiscount.acknowledged);
+//     } catch (err) {
+//       res.status(400).json({ message: err.message });
+//     }
+//   });
+
+//   router.patch("/abled/:Id",  async (req, res) => {
+//     try {
+//       const updateddiscount = await discount.updateOne(
+//         { _id: req.params.Id },
+//         { $set: { isActive: true } }
+//       );
+//       res
+//         .status(200)
+//         .send("updated :" + updateddiscount.acknowledged);
+//     } catch (err) {
+//       res.status(400).json({ message: err.message });
+//     }
+//   });
+
+module.exports= router;
