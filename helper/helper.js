@@ -15,9 +15,12 @@ function upload(file) {
         api_secret: process.env.CLOUDINARY_API_SECRET
 
     });
-
+    
     return new Q.Promise((resolve, reject) => {
-        cloudinary.v2.uploader.upload(file, {width: 50, height: 50}, (err, res) => {
+        cloudinary.v2.uploader.upload(file, {transformation: [
+            { width: "auto", crop: "scale" ,responsive: true},
+            {quality: 100, fetch_format: "auto"}
+            ]}, (err, res) => {
             if (err) {
                 console.log('cloudinary err:', err);
                 reject(err);

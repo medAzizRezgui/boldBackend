@@ -32,7 +32,7 @@ router.post("/add", Upload.array("files", 6), async (req, res, next) => {
     }
     if (urls) {
       let body = req.body;
-      let bodyw = _.extend(body, { files: urls });
+      let bodyw = _.extend(body, { files : urls });
       let new_Product = new Product(bodyw);
       await new_Product
         .save()

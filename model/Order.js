@@ -49,6 +49,10 @@ const OrderSchema = new mongoose.Schema({
   paidAt: {
     type: Date
   },
+  codeCoupon: {
+    type: Number, required: true, min:0 , max:100 , default: 0
+  },
+
 },
 { timestamps: true });
 
