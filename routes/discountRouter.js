@@ -28,6 +28,15 @@ router.post("/add", async (req, res) => {
     }
   });
 
+  router.get("/getall", async (req, res) => {
+    try {
+      const data = await discount.find();
+      res.status(200).send(data);
+    } catch (err) {
+      res.status(400).json({ message: err.message });
+    }
+  });
+
   router.patch("/enabled/:Id",  async (req, res) => {
     try {
       const updateddiscount = await discount.updateOne(
