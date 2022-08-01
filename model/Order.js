@@ -27,6 +27,7 @@ const OrderSchema = new mongoose.Schema({
       name: { type: String, required: true },
       qty: { type: Number, required: true },
       item_price: { type: Number, required: true },
+      image: { type: String, required: true },
       Product: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -57,6 +58,6 @@ const OrderSchema = new mongoose.Schema({
     type: Number, required: true, default: 0.0
   },
 },
-{ timestamps: true });
+  { timestamps: true });
 
 module.exports = mongoose.model("Orders", OrderSchema);
