@@ -59,6 +59,7 @@ router.post("/AddProd", Upload.array("files", 6), async (req, res) => {
       originalname: element.originalname,
     };
     filesArray.push(file);
+
   });
   console.log(filesArray);
   const data = new Product({
@@ -162,7 +163,7 @@ router.patch("/:ProductId", Upload.array("files", 6), async (req, res) => {
 });
 
 
-//update product cloudinary 
+//update product cloudinary
 router.patch("/update/:ProductId", Upload.array("files", 6), async (req, res) => {
   if (req.files.length > 0) {
     const files = req.files;
@@ -178,6 +179,7 @@ router.patch("/update/:ProductId", Upload.array("files", 6), async (req, res) =>
       var updates = {
         name: req.body.name,
         price: req.body.price,
+        description:req.body.description,
         sousCategorie: req.body.sousCategorie,
         rating: req.body.rating,
         countInStock: req.body.countInStock,
@@ -188,6 +190,7 @@ router.patch("/update/:ProductId", Upload.array("files", 6), async (req, res) =>
       var updates = {
         name: req.body.name,
         price: req.body.price,
+        description:req.body.description,
         sousCategorie: req.body.sousCategorie,
         rating: req.body.rating,
         countInStock: req.body.countInStock}

@@ -2,7 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const app = express();
 require("dotenv/config");
-const morgan = require('morgan'); 
+const morgan = require('morgan');
 const helmet = require("helmet");
 const path = require('path');
 const mongoose = require("mongoose");
@@ -38,8 +38,8 @@ app.use(
 app.use('/uploads', express.static(path.join(__dirname, '/uploads')));
 if(process.env.NODE_ENV === 'development'){
   app.use(morgan('tiny'));
-  } 
-  
+  }
+
 // if (process.env.NODE_ENV === 'production') {
 //   app.use(express.static(path.join(__dirname, '/client/build')));
 //   app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html')));
@@ -48,7 +48,7 @@ if(process.env.NODE_ENV === 'development'){
 // }
 
 app.use(helmet());
-app.use("/iiiijaMena", User);
+app.use("/auth", User);
 app.use("/categorie", Categorie);
 app.use("/sousCat", SousCategorie);
 app.use("/Product", Product);

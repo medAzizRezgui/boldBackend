@@ -6,8 +6,9 @@ const SousCategorieSchema = new mongoose.Schema({
     required: true,
   },
   categorie: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Categorie",
+    type: String,
+    required: true,
+
   },
 }, { timestamps: true });
 

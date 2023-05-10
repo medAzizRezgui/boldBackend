@@ -5,7 +5,7 @@ const Q = require("q");
 
 const dotenv = require('dotenv')
 
-dotenv.config() 
+dotenv.config()
 
 
 function upload(file) {
@@ -13,9 +13,8 @@ function upload(file) {
         cloud_name: process.env.CLOUD_NAME,
         api_key: process.env.CLOUDINARY_API_KEY,
         api_secret: process.env.CLOUDINARY_API_SECRET
-
     });
-    
+
     return new Q.Promise((resolve, reject) => {
         cloudinary.v2.uploader.upload(file, {transformation: [
             { width: "auto", crop: "scale" ,responsive: true},
