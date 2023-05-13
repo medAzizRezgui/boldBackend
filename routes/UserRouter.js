@@ -22,7 +22,7 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.json(errors);
+      return res.status(400).send(errors)
     }
 
     let user = await User.findOne({ email: req.body.email });
@@ -37,7 +37,7 @@ router.post(
       return res.status(404).send("invalid email or password");
     }
     const token = user.generateTokens();
-    return res.status(200).json(token);
+    return res.status(200).json({user,token});
   }
 );
 
@@ -59,7 +59,7 @@ router.post(
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       console.log(errors);
-      return res.send(errors);
+      return res.status(400).send(errors)
     }
     let user = await User.findOne({ email: req.body.email });
 
@@ -83,7 +83,7 @@ router.post(
   }
 );
 
-// update product 
+// update product
 router.patch("/updatePassword/:userId", async (req, res) => {
   try {
     const { userId } = req.params

@@ -6,10 +6,12 @@ const SousCategorieSchema = new mongoose.Schema({
     required: true,
   },
   categorie: {
-    type: String,
-    required: true,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Categorie',
+    required: true
 
   },
 }, { timestamps: true });
+
 
 module.exports = mongoose.model("Sous-Categorie", SousCategorieSchema);
