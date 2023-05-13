@@ -8,19 +8,17 @@ const ProductSchema = new mongoose.Schema({
     unique : false
   },
   sousCategorie: {
-    // type: mongoose.Schema.Types.ObjectId,
-    // ref: "Sous-Categorie",
-    type:String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Sous-Categorie",
     required:true,
   },
-      categorie: {
-        // type: mongoose.Schema.Types.ObjectId,
-        // ref: "Sous-Categorie",
-        type:String,
-        required:true,
-      },
   files:{
     type: []
+  },
+  categorie: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Categorie",
+    required:true,
   },
   price: {
     type: Number,

@@ -20,8 +20,10 @@ router.post("/add", async (req, res) => {
 //get all categorie
 router.get("/getall", async (req, res) => {
   try {
-    const data = await categorie.find();
-    res.status(200).send(data);
+    const categories = await categorie.find().populate(
+        "name"
+    );
+    res.status(200).send(categories);
   } catch (err) {
     res.status(400).send({ message: err });
   }

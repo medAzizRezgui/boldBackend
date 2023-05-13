@@ -46,7 +46,7 @@ router.delete("/delete/:SousCategorieId", async (req, res) => {
 
 router.patch("/:souscatId", async (req, res) => {
   try {
-    const updatedSousCategorie = await categorie.updateOne(
+    const updatedSousCategorie = await SousCategorie.updateOne(
       { _id: req.params.souscatId },
       { $set: { name: req.body.name } }
     );

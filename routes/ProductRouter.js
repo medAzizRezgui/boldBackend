@@ -84,7 +84,7 @@ router.get("/getall", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
     const Products = await Product.find()
-      .populate("sousCategorie", "name")
+      .populate("sousCategorie", "name").populate("categorie","name")
       .limit(limit * 1)
       .skip(page - 1);
     res.status(200).send(Products);
