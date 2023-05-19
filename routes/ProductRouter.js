@@ -84,7 +84,7 @@ router.get("/getall", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
     const Products = await Product.find()
-      .populate("sousCategorie", "name").populate("categorie","name")
+      .populate("sousCategorie", "name").populate("categorie","name ")
       .limit(limit * 1)
       .skip(page - 1);
     res.status(200).send(Products);
@@ -134,6 +134,7 @@ router.patch("/:ProductId", Upload.array("files", 6), async (req, res) => {
       name: req.body.name,
       price: req.body.price,
       sousCategorie: req.body.sousCategorie,
+      categorie:req.body.categorie,
       rating: req.body.rating,
       countInStock: req.body.countInStock,
       files: filesArray,
@@ -143,6 +144,7 @@ router.patch("/:ProductId", Upload.array("files", 6), async (req, res) => {
       name: req.body.name,
       price: req.body.price,
       sousCategorie: req.body.sousCategorie,
+      categorie:req.body.categorie,
       rating: req.body.rating,
       countInStock: req.body.countInStock,
     };
@@ -167,6 +169,7 @@ router.patch("/:ProductId", Upload.array("files", 6), async (req, res) => {
 router.patch("/update/:ProductId", Upload.array("files", 6), async (req, res) => {
   if (req.files.length > 0) {
     const files = req.files;
+    console.log("FILLEEES",files)
       let urls = [];
       let multiple = async (path) => await upload(path);
       for (const file of files) {
@@ -181,6 +184,7 @@ router.patch("/update/:ProductId", Upload.array("files", 6), async (req, res) =>
         price: req.body.price,
         description:req.body.description,
         sousCategorie: req.body.sousCategorie,
+        categorie:req.body.categorie,
         rating: req.body.rating,
         countInStock: req.body.countInStock,
         files: urls,
@@ -192,6 +196,7 @@ router.patch("/update/:ProductId", Upload.array("files", 6), async (req, res) =>
         price: req.body.price,
         description:req.body.description,
         sousCategorie: req.body.sousCategorie,
+        categorie:req.body.categorie,
         rating: req.body.rating,
         countInStock: req.body.countInStock}
     }

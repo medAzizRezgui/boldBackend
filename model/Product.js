@@ -15,6 +15,14 @@ const ProductSchema = new mongoose.Schema({
   files:{
     type: []
   },
+  sku:{
+    type:String,
+    required:true
+  },
+  features:{
+    type:String,
+    required:true
+  },
   categorie: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Categorie",
