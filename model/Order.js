@@ -28,11 +28,6 @@ const OrderSchema = new mongoose.Schema({
       qty: { type: Number, required: true },
       item_price: { type: Number, required: true },
       image: { type: String, required: true },
-      Product: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: "Product",
-      },
     },
   ],
   totalPrice: {
@@ -51,8 +46,8 @@ const OrderSchema = new mongoose.Schema({
     type: Date
   },
   coupon: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "discout_code",
+    type: Number,
+    required:true
   },
   finalPrice: {
     type: Number, required: true, default: 0.0

@@ -12,7 +12,7 @@ if (Products && Products.length === 0) {
 } else {
   let som =0;
   Products.forEach(element => {
-    som =som +( (element.item_price) * (element.qty))
+    som = som +( (element.item_price) * (element.qty))
   })
   const NewOrder = new Order({
     fullname,
@@ -47,7 +47,7 @@ router.get("/get/:orderId", async (req, res) => {
     res.status(400).send("order not found");
   }
 });
- 
+
 
 router.patch("/deliver/:orderId",async (req,res)=>{
   const order = await Order.findById(req.params.orderId);

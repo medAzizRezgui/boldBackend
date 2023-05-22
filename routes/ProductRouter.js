@@ -32,7 +32,7 @@ router.post("/add", Upload.array("files", 6), async (req, res, next) => {
     }
     if (urls) {
       let body = req.body;
-      let bodyw = _.extend(body, { files : urls });
+      let bodyw = _.extend(body, { files: urls });
       let new_Product = new Product(bodyw);
       await new_Product
         .save()
@@ -59,7 +59,6 @@ router.post("/AddProd", Upload.array("files", 6), async (req, res) => {
       originalname: element.originalname,
     };
     filesArray.push(file);
-
   });
   console.log(filesArray);
   const data = new Product({
@@ -84,7 +83,8 @@ router.get("/getall", async (req, res) => {
   try {
     const { page = 1, limit = 10 } = req.query;
     const Products = await Product.find()
-      .populate("sousCategorie", "name").populate("categorie","name ")
+      .populate("sousCategorie", "name")
+      .populate("categorie", "name ")
       .limit(limit * 1)
       .skip(page - 1);
     res.status(200).send(Products);
@@ -121,7 +121,6 @@ router.delete("/delete/:ProductId", async (req, res) => {
 
 //update product
 router.patch("/:ProductId", Upload.array("files", 6), async (req, res) => {
-
   if (req.files.length > 0) {
     let filesArray = [];
     req.files.forEach((element) => {
@@ -134,7 +133,7 @@ router.patch("/:ProductId", Upload.array("files", 6), async (req, res) => {
       name: req.body.name,
       price: req.body.price,
       sousCategorie: req.body.sousCategorie,
-      categorie:req.body.categorie,
+      categorie: req.body.categorie,
       rating: req.body.rating,
       countInStock: req.body.countInStock,
       files: filesArray,
@@ -144,7 +143,7 @@ router.patch("/:ProductId", Upload.array("files", 6), async (req, res) => {
       name: req.body.name,
       price: req.body.price,
       sousCategorie: req.body.sousCategorie,
-      categorie:req.body.categorie,
+      categorie: req.body.categorie,
       rating: req.body.rating,
       countInStock: req.body.countInStock,
     };
@@ -164,55 +163,69 @@ router.patch("/:ProductId", Upload.array("files", 6), async (req, res) => {
   }
 });
 
-
 //update product cloudinary
-router.patch("/update/:ProductId", Upload.array("files", 6), async (req, res) => {
-  if (req.files.length > 0) {
-    const files = req.files;
-    console.log("FILLEEES",files)
+router.patch(
+  "/update/:ProductId",
+  Upload.array("files", 6),
+  async (req, res) => {
+    if (req?.files?.length) {
+      const files = req.files;
       let urls = [];
       let multiple = async (path) => await upload(path);
       for (const file of files) {
         const { path } = file;
-        console.log("path", file);
         const newPath = await multiple(path);
         urls.push(newPath);
         fs.unlinkSync(path);
       }
+
+      const isFilesArray = req.body.files instanceof Array;
+      const newFiles = [
+        ...urls,
+        ...(isFilesArray ? req.body.files : [req.body.files]),
+      ];
       var updates = {
         name: req.body.name,
         price: req.body.price,
-        description:req.body.description,
+        description: req.body.description,
         sousCategorie: req.body.sousCategorie,
-        categorie:req.body.categorie,
-        rating: req.body.rating,
+        categorie: req.body.categorie,
         countInStock: req.body.countInStock,
-        files: urls,
-      }
-      console.log(urls)
-    }else{
+        files: newFiles.filter((item) => item !== undefined),
+        specifications: req.body.specifications,
+        discount: req.body.discount,
+        features:req.body.features
+
+      };
+    } else {
       var updates = {
         name: req.body.name,
         price: req.body.price,
-        description:req.body.description,
+        description: req.body.description,
         sousCategorie: req.body.sousCategorie,
-        categorie:req.body.categorie,
-        rating: req.body.rating,
-        countInStock: req.body.countInStock}
+        categorie: req.body.categorie,
+        countInStock: req.body.countInStock,
+        files: req.body.files,
+        specifications: req.body.specifications,
+        discount: req.body.discount,
+        features:req.body.features
+      };
     }
-  try {
-    const updatedProduct = await Product.findOneAndUpdate(
-      { _id: req.params.ProductId },
-      {
-        $set: updates,
-      }
-    );
-    res.status(200).json(updatedProduct);
-  } catch (err) {
-    console.log(err);
-    res.status(400).json({ msg: err.message });
+    try {
+      const updatedProduct = await Product.findOneAndUpdate(
+        { _id: req.params.ProductId },
+        {
+          $set: updates,
+          $push: { rating: req.body.rating },
+        },
+        { new: true }
+      );
+      res.status(200).json(updatedProduct);
+    } catch (err) {
+      console.log(err);
+      res.status(400).json({ msg: err.message });
+    }
   }
-});
+);
 
 module.exports = router;
-
