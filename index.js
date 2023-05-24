@@ -10,7 +10,7 @@ const User = require("./routes/UserRouter");
 const Categorie = require("./routes/CategorieRoute");
 const SousCategorie = require("./routes/SousCatRoute");
 const Product = require("./routes/ProductRouter");
-const discountCode = require("./routes/discountRouter");
+const coupon = require("./routes/couponRouter");
 const Order = require('./routes/OrderRoute')
 
 mongoose
@@ -52,7 +52,7 @@ app.use("/auth", User);
 app.use("/categorie", Categorie);
 app.use("/sousCat", SousCategorie);
 app.use("/Product", Product);
-app.use("/code", discountCode);
+app.use("/coupon", coupon);
 app.use("/order", Order);
 // page not found
 app.all("*", (req, res, next) => {
