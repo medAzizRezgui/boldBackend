@@ -26,7 +26,7 @@ app.use(
   cors({
     credentials: true,
     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-    origin: ['http://localhost:4200','http://localhost:3000'],
+    origin: ['http://localhost:3001','http://localhost:3000'],
   })
 );
 // app.use(express.static(__dirname + "/public"));
