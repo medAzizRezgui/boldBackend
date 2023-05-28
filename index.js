@@ -32,7 +32,7 @@ app.use(
     origin: [
       "http://localhost:3001",
       "http://localhost:3000",
-      "https://www.rezgui-aziz.me/",
+      "https://www.rezgui-aziz.me",
     ],
   })
 );
