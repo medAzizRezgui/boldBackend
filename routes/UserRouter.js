@@ -4,6 +4,7 @@ const router = express.Router();
 const User = require("../model/User");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
+const { encode } = require('js-base64');
 
 //Auth
 router.post(
@@ -83,7 +84,7 @@ router.post(
   }
 );
 
-// update product
+
 router.patch("/updatePassword/:userId", async (req, res) => {
   try {
     const { userId } = req.params;
@@ -99,6 +100,28 @@ router.patch("/updatePassword/:userId", async (req, res) => {
     return res.status(400).json({ status: false, msg: "error occured! " });
   }
 });
+router.patch('/changePassword', async (req, res) => {
+  try {
+    const { email, newPassword } = req.body;
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    const user = await User.findOneAndUpdate(
+        { email: email },
+        { password: hashedPassword },
+        { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ status: false, msg: 'User not found' });
+    }
+
+    return res.status(200).json({ status: true, data: user });
+  } catch (error) {
+    console.error('Error updating password:', error);
+    return res.status(400).json({ status: false, msg: 'An error occurred' });
+  }
+});
 
 const transporter = nodemailer.createTransport({
   service: "gmail",
@@ -110,21 +133,16 @@ const transporter = nodemailer.createTransport({
 
 router.post("/forgot", async (req, res) => {
   const { email } = req.body;
-  const {newPassword} = req.body;
+
 
   try {
-
     const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    await sendPasswordResetEmail(email, newPassword);
-
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
-    await user.save();
+    await sendPasswordResetEmail(email);
 
     res.json({ message: "Password reset email sent" });
   } catch (error) {
@@ -136,13 +154,15 @@ router.post("/forgot", async (req, res) => {
 
 
 // Helper function to send the password reset email
-async function sendPasswordResetEmail(email, temporaryPassword) {
+async function sendPasswordResetEmail(email){
   try {
+    const encodedEmail = encode(email);
+    const resetLink = `https://www.rezgui-aziz.me/reset?email=${encodedEmail}`;
     await transporter.sendMail({
       from: "azizrezgui4@gmail.com",
       to: email,
       subject: "Password Reset",
-      text: `Your New  password: ${temporaryPassword}`,
+      text: `Reset your password here : ${resetLink}`,
     });
     console.log("Password reset email sent");
   } catch (error) {
