@@ -29,7 +29,11 @@ app.use(
   cors({
     credentials: true,
     methods: ["GET", "POST", "DELETE", "UPDATE", "PUT", "PATCH"],
-    origin: ["http://localhost:3001", "http://localhost:3000"],
+    origin: [
+      "http://localhost:3001",
+      "http://localhost:3000",
+      "https://e-commercepfe-m8ilb3hop-medazizrezgui.vercel.app",
+    ],
   })
 );
 // app.use(express.static(__dirname + "/public"));
