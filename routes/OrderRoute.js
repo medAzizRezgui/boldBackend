@@ -61,6 +61,19 @@ router.patch("/deliver/:orderId",async (req,res)=>{
     throw new Error('Order not found');
   }
 })
+
+router.patch("/cancel/:orderId",async (req,res)=>{
+  const order = await Order.findById(req.params.orderId);
+  if (order) {
+    order.isCanceled = true;
+    order.canceledAt = Date.now();
+    const updatedOrder = await order.save();
+    res.json(updatedOrder);
+  } else {
+    res.status(404)
+    throw new Error('Order not found');
+  }
+})
 router.patch("/pay/:orderId",async (req,res)=>{
   const order = await Order.findById(req.params.orderId);
   if (order) {

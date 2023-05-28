@@ -194,8 +194,7 @@ router.patch(
         files: newFiles.filter((item) => item !== undefined),
         specifications: req.body.specifications,
         discount: req.body.discount,
-        features:req.body.features
-
+        features: req.body.features,
       };
     } else {
       var updates = {
@@ -208,7 +207,7 @@ router.patch(
         files: req.body.files,
         specifications: req.body.specifications,
         discount: req.body.discount,
-        features:req.body.features
+        features: req.body.features,
       };
     }
     try {
@@ -216,7 +215,13 @@ router.patch(
         { _id: req.params.ProductId },
         {
           $set: updates,
-          $push: { rating: req.body.rating },
+          $push: {
+            rating: {
+              rate: req.body.rating.rate,
+              name: req.body.rating.name,
+              email: req.body.rating.email,
+            },
+          },
         },
         { new: true }
       );

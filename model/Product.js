@@ -38,8 +38,18 @@ const ProductSchema = new mongoose.Schema(
     },
     rating: [
       {
-        type: Number,
-        default: 0,
+        rate: {
+          type: Number,
+          default: 0,
+        },
+        name: {
+          type: String,
+          default: '',
+        },
+        email: {
+          type: String,
+          default: '',
+        },
       },
     ],
 
