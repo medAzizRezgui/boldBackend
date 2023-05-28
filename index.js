@@ -32,7 +32,7 @@ app.use(
     origin: [
       "http://localhost:3001",
       "http://localhost:3000",
-      "https://e-commercepfe-m8ilb3hop-medazizrezgui.vercel.app",
+      "https://www.rezgui-aziz.me/",
     ],
   })
 );
