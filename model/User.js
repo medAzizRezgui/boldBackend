@@ -26,10 +26,10 @@ const userSchema = new mongoose.Schema(
       default: false,
     },
     shippingAddress: {
-      region: { type: String, required: true },
-      city: { type: String, required: true },
-      postalCode: { type: Number, required: true },
-      street: { type: String, required: true },
+      region: { type: String, required: false },
+      city: { type: String, required: false },
+      postalCode: { type: Number, required: false },
+      street: { type: String, required: false },
     },
   },
   { timestamps: true }
