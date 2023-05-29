@@ -4,7 +4,7 @@ const router = express.Router();
 const User = require("../model/User");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
-const { encode } = require('js-base64');
+const { encode } = require("js-base64");
 
 //Auth
 router.post(
@@ -83,7 +83,37 @@ router.post(
     }
   }
 );
+router.patch("/updateUser/:userId", async (req, res) => {
+  try {
+    const updates = {};
 
+    if (req.body.fullName) {
+      updates.fullName = req.body.fullName;
+    }
+
+    if (req.body.phoneNumber) {
+      updates.phoneNumber = req.body.phoneNumber;
+    }
+
+    if (req.body.email) {
+      updates.email = req.body.email;
+    }
+    if (req.body.shippingAddress) {
+      updates.shippingAddress = req.body.shippingAddress;
+    }
+
+    const user = await User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $set: updates },
+      { new: true }
+    );
+
+    return res.status(200).json(user);
+  } catch (error) {
+    console.error("Error updating user:", error);
+    return res.status(400).json({ status: false, msg: "An error occurred" });
+  }
+});
 
 router.patch("/updatePassword/:userId", async (req, res) => {
   try {
@@ -100,26 +130,26 @@ router.patch("/updatePassword/:userId", async (req, res) => {
     return res.status(400).json({ status: false, msg: "error occured! " });
   }
 });
-router.patch('/changePassword', async (req, res) => {
+router.patch("/changePassword", async (req, res) => {
   try {
     const { email, newPassword } = req.body;
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
     const user = await User.findOneAndUpdate(
-        { email: email },
-        { password: hashedPassword },
-        { new: true }
+      { email: email },
+      { password: hashedPassword },
+      { new: true }
     );
 
     if (!user) {
-      return res.status(404).json({ status: false, msg: 'User not found' });
+      return res.status(404).json({ status: false, msg: "User not found" });
     }
 
     return res.status(200).json({ status: true, data: user });
   } catch (error) {
-    console.error('Error updating password:', error);
-    return res.status(400).json({ status: false, msg: 'An error occurred' });
+    console.error("Error updating password:", error);
+    return res.status(400).json({ status: false, msg: "An error occurred" });
   }
 });
 
@@ -133,7 +163,6 @@ const transporter = nodemailer.createTransport({
 
 router.post("/forgot", async (req, res) => {
   const { email } = req.body;
-
 
   try {
     const user = await User.findOne({ email });
@@ -151,10 +180,8 @@ router.post("/forgot", async (req, res) => {
   }
 });
 
-
-
 // Helper function to send the password reset email
-async function sendPasswordResetEmail(email){
+async function sendPasswordResetEmail(email) {
   try {
     const encodedEmail = encode(email);
     const resetLink = `https://www.rezgui-aziz.me/reset?email=${encodedEmail}`;
