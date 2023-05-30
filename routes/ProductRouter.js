@@ -78,20 +78,35 @@ router.post("/AddProd", Upload.array("files", 6), async (req, res) => {
   }
 });
 
-//get all product
 router.get("/getall", async (req, res) => {
   try {
-    const { page = 1, limit = 10 } = req.query;
-    const Products = await Product.find()
-      .populate("sousCategorie", "name")
-      .populate("categorie", "name ")
-      .limit(limit * 1)
-      .skip(page - 1);
-    res.status(200).send(Products);
+    const { page = 1, limit = 12 } = req.query;
+    const skipCount = (page - 1) * limit;
+
+    const productsQuery = Product.find()
+        .populate("sousCategorie", "name")
+        .populate("categorie", "name")
+        .limit(Number(limit))
+        .skip(Number(skipCount));
+
+    const productsPromise = productsQuery.exec();
+    const countPromise = Product.countDocuments().exec();
+
+    const [products, count] = await Promise.all([productsPromise, countPromise]);
+
+    const totalPages = Math.ceil(count / limit);
+
+    res.status(200).json({
+      products,
+      currentPage: page,
+      totalPages,
+      totalItems: count
+    });
   } catch (err) {
     res.status(400).send({ err });
   }
 });
+
 
 //get Product by id
 router.get("/:ProdId", async (req, res) => {
@@ -195,7 +210,7 @@ router.patch(
         specifications: req.body.specifications,
         discount: req.body.discount,
         features: req.body.features ? req.body.features : [],
-        sku:req.body.sku
+        sku: req.body.sku,
       };
     } else {
       var updates = {
@@ -209,7 +224,7 @@ router.patch(
         specifications: req.body.specifications,
         discount: req.body.discount,
         features: req.body.features,
-        sku:req.body.sku
+        sku: req.body.sku,
       };
     }
 
@@ -236,28 +251,25 @@ router.patch(
   }
 );
 
-router.patch(
-    "/rate/:ProductId", async (req, res) => {
-
-      try {
-        const updatedProduct = await Product.findOneAndUpdate(
-          { _id: req.params.ProductId },
-          {
-            $push: {
-              rating: {
-                rate: req.body.rating.rate,
-                name: req.body.rating.name,
-                email: req.body.rating.email,
-              },
-            },
+router.patch("/rate/:ProductId", async (req, res) => {
+  try {
+    const updatedProduct = await Product.findOneAndUpdate(
+      { _id: req.params.ProductId },
+      {
+        $push: {
+          rating: {
+            rate: req.body.rating.rate,
+            name: req.body.rating.name,
+            email: req.body.rating.email,
           },
-          { new: true }
-        );
-        res.status(200).json(updatedProduct);
-      } catch (err) {
-        console.log(err);
-        res.status(400).json({ msg: err.message });
-      }
-    }
-);
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedProduct);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json({ msg: err.message });
+  }
+});
 module.exports = router;
