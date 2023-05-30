@@ -194,7 +194,7 @@ router.patch(
         files: newFiles.filter((item) => item !== undefined),
         specifications: req.body.specifications,
         discount: req.body.discount,
-        features: req.body.features,
+        features: req.body.features ? req.body.features : [],
         sku:req.body.sku
       };
     } else {
@@ -218,13 +218,13 @@ router.patch(
         { _id: req.params.ProductId },
         {
           $set: updates,
-          $push: {
-            rating: {
-              rate: req.body.rating.rate,
-              name: req.body.rating.name,
-              email: req.body.rating.email,
-            },
-          },
+          // $push: {
+          //   rating: {
+          //     rate: req.body.rating.rate,
+          //     name: req.body.rating.name,
+          //     email: req.body.rating.email,
+          //   },
+          // },
         },
         { new: true }
       );
@@ -236,4 +236,28 @@ router.patch(
   }
 );
 
+router.patch(
+    "/rate/:ProductId", async (req, res) => {
+
+      try {
+        const updatedProduct = await Product.findOneAndUpdate(
+          { _id: req.params.ProductId },
+          {
+            $push: {
+              rating: {
+                rate: req.body.rating.rate,
+                name: req.body.rating.name,
+                email: req.body.rating.email,
+              },
+            },
+          },
+          { new: true }
+        );
+        res.status(200).json(updatedProduct);
+      } catch (err) {
+        console.log(err);
+        res.status(400).json({ msg: err.message });
+      }
+    }
+);
 module.exports = router;
