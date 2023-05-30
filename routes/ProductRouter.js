@@ -195,6 +195,7 @@ router.patch(
         specifications: req.body.specifications,
         discount: req.body.discount,
         features: req.body.features,
+        sku:req.body.sku
       };
     } else {
       var updates = {
@@ -208,8 +209,10 @@ router.patch(
         specifications: req.body.specifications,
         discount: req.body.discount,
         features: req.body.features,
+        sku:req.body.sku
       };
     }
+
     try {
       const updatedProduct = await Product.findOneAndUpdate(
         { _id: req.params.ProductId },
