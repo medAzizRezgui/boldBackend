@@ -46,12 +46,25 @@ router.get("/get/:orderId", async (req, res) => {
     res.status(400).send("order not found");
   }
 });
+router.get("/getByCoupon/:coupon", async (req, res) => {
+  try {
+    const coupon = req.params.coupon;
+    const data = await Order.find({ coupon:coupon});
+    res.status(200).send(data);
+  } catch (err) {
+    res.status(400).send("Wrong Coupon");
+  }
+});
 
-router.patch("/deliver/:orderId", async (req, res) => {
+
+
+
+
+router.patch("/status/:orderId", async (req, res) => {
   const order = await Order.findById(req.params.orderId);
   if (order) {
-    order.isDelivered = true;
-    order.deliveredAt = Date.now();
+    order.status = req.body.status;
+    order.updatedAt = Date.now();
     const updatedOrder = await order.save();
     res.json(updatedOrder);
   } else {
@@ -60,18 +73,7 @@ router.patch("/deliver/:orderId", async (req, res) => {
   }
 });
 
-router.patch("/cancel/:orderId", async (req, res) => {
-  const order = await Order.findById(req.params.orderId);
-  if (order) {
-    order.isCanceled = true;
-    order.canceledAt = Date.now();
-    const updatedOrder = await order.save();
-    res.json(updatedOrder);
-  } else {
-    res.status(404);
-    throw new Error("Order not found");
-  }
-});
+
 router.patch("/pay/:orderId", async (req, res) => {
   const order = await Order.findById(req.params.orderId);
   if (order) {

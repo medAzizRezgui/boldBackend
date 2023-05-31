@@ -28,6 +28,7 @@ const OrderSchema = new mongoose.Schema(
         qty: { type: Number, required: true },
         item_price: { type: Number, required: true },
         image: { type: String, required: true },
+        profit: { type: Number, required: true },
       },
     ],
     totalPrice: {
@@ -35,13 +36,9 @@ const OrderSchema = new mongoose.Schema(
       required: true,
       default: 0.0,
     },
-    isDelivered: {
-      type: Boolean,
-      required: true,
-      default: false,
-    },
-    deliveredAt: {
-      type: Date,
+    status: {
+      value: { type: Number, required: false, default: 0 },
+      label: { type: String, required: false, default: "Not Delivered" },
     },
     isPaid: {
       type: Boolean,
@@ -51,12 +48,7 @@ const OrderSchema = new mongoose.Schema(
     paidAt: {
       type: Date,
     },
-    isCanceled: {
-      type: Boolean,
-      required: false,
-      default: false,
-    },
-    canceledAt: {
+    updatedAt: {
       type: Date,
     },
     coupon: {

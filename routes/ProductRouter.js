@@ -80,14 +80,15 @@ router.post("/AddProd", Upload.array("files", 6), async (req, res) => {
 
 router.get("/getall", async (req, res) => {
   try {
-    const { page = 1, limit = 12 } = req.query;
-    const skipCount = (page - 1) * limit;
+    // const { page = 1, limit = 12 } = req.query;
+    // const skipCount = (page - 1) * limit;
 
     const productsQuery = Product.find()
         .populate("sousCategorie", "name")
         .populate("categorie", "name")
-        .limit(Number(limit))
-        .skip(Number(skipCount));
+        // .limit(Number(limit))
+        // .skip(Number(skipCount));
+    const limit = 12;
 
     const productsPromise = productsQuery.exec();
     const countPromise = Product.countDocuments().exec();
@@ -98,7 +99,7 @@ router.get("/getall", async (req, res) => {
 
     res.status(200).json({
       products,
-      currentPage: page,
+      // currentPage: page,
       totalPages,
       totalItems: count
     });
@@ -134,49 +135,7 @@ router.delete("/delete/:ProductId", async (req, res) => {
   }
 });
 
-//update product
-router.patch("/:ProductId", Upload.array("files", 6), async (req, res) => {
-  if (req.files.length > 0) {
-    let filesArray = [];
-    req.files.forEach((element) => {
-      const file = {
-        originalname: element.originalname,
-      };
-      filesArray.push(file);
-    });
-    var updates = {
-      name: req.body.name,
-      price: req.body.price,
-      sousCategorie: req.body.sousCategorie,
-      categorie: req.body.categorie,
-      rating: req.body.rating,
-      countInStock: req.body.countInStock,
-      files: filesArray,
-    };
-  } else {
-    var updates = {
-      name: req.body.name,
-      price: req.body.price,
-      sousCategorie: req.body.sousCategorie,
-      categorie: req.body.categorie,
-      rating: req.body.rating,
-      countInStock: req.body.countInStock,
-    };
-  }
 
-  try {
-    const updatedProduct = await Product.findOneAndUpdate(
-      { _id: req.params.ProductId },
-      {
-        $set: updates,
-      }
-    );
-    res.status(200).json(updatedProduct);
-  } catch (err) {
-    console.log(err);
-    res.status(400).json({ msg: err.message });
-  }
-});
 
 //update product cloudinary
 router.patch(
@@ -211,6 +170,7 @@ router.patch(
         discount: req.body.discount,
         features: req.body.features ? req.body.features : [],
         sku: req.body.sku,
+        profit:req.body.profit,
       };
     } else {
       var updates = {
@@ -225,6 +185,8 @@ router.patch(
         discount: req.body.discount,
         features: req.body.features,
         sku: req.body.sku,
+        profit:req.body.profit,
+
       };
     }
 

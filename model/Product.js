@@ -44,11 +44,11 @@ const ProductSchema = new mongoose.Schema(
         },
         name: {
           type: String,
-          default: '',
+          default: "",
         },
         email: {
           type: String,
-          default: '',
+          default: "",
         },
       },
     ],
@@ -61,6 +61,11 @@ const ProductSchema = new mongoose.Schema(
     description: {
       type: String,
       required: true,
+    },
+    profit: {
+      type: Number,
+      required: true,
+      default: 0,
     },
     discount: {
       type: Number,
