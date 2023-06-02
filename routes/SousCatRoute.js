@@ -3,10 +3,10 @@ require("express-async-errors");
 require("dotenv").config();
 const router = express.Router();
 const SousCategorie = require("../model/Sous-categorie");
-const auth = require('../middleware/auth')
-const admin = require('../middleware/admin')
+const authenticateTokenAdmin = require("../middleware/authenticateTokenAdmin");
 
-router.post("/add", async (req, res) => {
+
+router.post("/add",authenticateTokenAdmin, async (req, res) => {
   const data = new SousCategorie({
     name: req.body.name,
     categorie: req.body.categorie,
@@ -33,7 +33,7 @@ router.get("/getall", async (req, res) => {
   }
 });
 
-router.delete("/delete/:SousCategorieId", async (req, res) => {
+router.delete("/delete/:SousCategorieId",authenticateTokenAdmin, async (req, res) => {
   try {
     const removedSousCategorie = await SousCategorie.deleteOne({
       _id: req.params.SousCategorieId,
@@ -44,7 +44,7 @@ router.delete("/delete/:SousCategorieId", async (req, res) => {
   }
 });
 
-router.patch("/:souscatId", async (req, res) => {
+router.patch("/:souscatId",authenticateTokenAdmin, async (req, res) => {
   try {
     const updatedSousCategorie = await SousCategorie.updateOne(
       { _id: req.params.souscatId },

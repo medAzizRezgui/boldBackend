@@ -2,10 +2,13 @@ const express = require("express");
 require("express-async-errors");
 const router = express.Router();
 const categorie = require("../model/Categorie");
-const auth = require('../middleware/auth')
-const admin = require('../middleware/admin')
+
+const authenticateTokenAdmin = require("../middleware/authenticateTokenAdmin");
+
+
+
 // add CATEGORIE
-router.post("/add", async (req, res) => {
+router.post("/add",authenticateTokenAdmin, async (req, res) => {
   const data = new categorie({
     name: req.body.name,
   });
@@ -40,7 +43,7 @@ router.get("/:catId",async (req, res) => {
 });
 
 //delete categorie
-router.delete("/delete/:catId", async (req, res) => {
+router.delete("/delete/:catId",authenticateTokenAdmin, async (req, res) => {
   try {
     const removedCategorie = await categorie.deleteOne({
       _id: req.params.catId,
@@ -52,7 +55,7 @@ router.delete("/delete/:catId", async (req, res) => {
 });
 
 //update categorie
-router.patch("/:catId",  async (req, res) => {
+router.patch("/:catId",authenticateTokenAdmin,  async (req, res) => {
   try {
     const updatedCategorie = await categorie.updateOne(
       { _id: req.params.catId },

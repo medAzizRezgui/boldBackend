@@ -2,10 +2,10 @@ const express = require("express");
 require("express-async-errors");
 const router = express.Router();
 const Order = require("../model/Order");
-const auth = require("../middleware/auth");
-const admin = require("../middleware/admin");
+const authenticateToken = require("../middleware/authenticateToken");
+const authenticateTokenAdmin = require("../middleware/authenticateTokenAdmin");
 
-router.post("/addOrder", async (req, res) => {
+router.post("/addOrder", authenticateToken, async (req, res) => {
   const { fullname, shippingAddress, phoneNumber, Products, email, coupon } =
     req.body;
   if (Products && Products.length === 0) {
@@ -49,18 +49,14 @@ router.get("/get/:orderId", async (req, res) => {
 router.get("/getByCoupon/:coupon", async (req, res) => {
   try {
     const coupon = req.params.coupon;
-    const data = await Order.find({ coupon:coupon});
+    const data = await Order.find({ coupon: coupon });
     res.status(200).send(data);
   } catch (err) {
     res.status(400).send("Wrong Coupon");
   }
 });
 
-
-
-
-
-router.patch("/status/:orderId", async (req, res) => {
+router.patch("/status/:orderId", authenticateTokenAdmin, async (req, res) => {
   const order = await Order.findById(req.params.orderId);
   if (order) {
     order.status = req.body.status;
@@ -73,8 +69,7 @@ router.patch("/status/:orderId", async (req, res) => {
   }
 });
 
-
-router.patch("/pay/:orderId", async (req, res) => {
+router.patch("/pay/:orderId", authenticateToken, async (req, res) => {
   const order = await Order.findById(req.params.orderId);
   if (order) {
     order.isPaid = true;
@@ -87,7 +82,7 @@ router.patch("/pay/:orderId", async (req, res) => {
   }
 });
 
-router.delete("/delete/:orderId", async (req, res) => {
+router.delete("/delete/:orderId", authenticateTokenAdmin, async (req, res) => {
   try {
     const removedOrder = await Order.deleteOne({
       _id: req.params.orderId,

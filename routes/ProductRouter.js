@@ -4,52 +4,58 @@ require("dotenv").config();
 const router = express.Router();
 const Product = require("../model/Product");
 const fs = require("fs");
-const auth = require("../middleware/auth");
-const admin = require("../middleware/admin");
+
 const Upload = require("../utils/upload");
 const upload = require("../helper/helper").upload;
 const vm = require("v-response");
 const _ = require("underscore");
+const authenticateTokenAdmin = require("../middleware/authenticateTokenAdmin");
+const authenticateToken = require("../middleware/authenticateToken");
 
 //create product
-router.post("/add", Upload.array("files", 6), async (req, res, next) => {
-  if (!req.files || _.isEmpty(req.files)) {
-    return res
-      .status(400)
-      .json(vm.ApiResponse(false, 400, "No file uploaded'"));
-  }
-  const files = req.files;
-  try {
-    let urls = [];
-    let multiple = async (path) => await upload(path);
-    for (const file of files) {
-      const { path } = file;
+router.post(
+  "/add",
+  authenticateTokenAdmin,
+  Upload.array("files", 6),
+  async (req, res, next) => {
+    if (!req.files || _.isEmpty(req.files)) {
+      return res
+        .status(400)
+        .json(vm.ApiResponse(false, 400, "No file uploaded'"));
+    }
+    const files = req.files;
+    try {
+      let urls = [];
+      let multiple = async (path) => await upload(path);
+      for (const file of files) {
+        const { path } = file;
 
-      const newPath = await multiple(path);
-      urls.push(newPath);
-      fs.unlinkSync(path);
+        const newPath = await multiple(path);
+        urls.push(newPath);
+        fs.unlinkSync(path);
+      }
+      if (urls) {
+        let body = req.body;
+        let bodyw = _.extend(body, { files: urls });
+        let new_Product = new Product(bodyw);
+        await new_Product
+          .save()
+          .then((saved) => {
+            return res.json({ saved });
+          })
+          .catch((error) => {
+            return res.json({ msg: error.message });
+          });
+      }
+      if (!urls) {
+        return res.status(400).json(vm.ApiResponse(false, 400, ""));
+      }
+    } catch (e) {
+      console.log("err :", e.message);
+      return next(e);
     }
-    if (urls) {
-      let body = req.body;
-      let bodyw = _.extend(body, { files: urls });
-      let new_Product = new Product(bodyw);
-      await new_Product
-        .save()
-        .then((saved) => {
-          return res.json({ saved });
-        })
-        .catch((error) => {
-          return res.json({ msg: error.message });
-        });
-    }
-    if (!urls) {
-      return res.status(400).json(vm.ApiResponse(false, 400, ""));
-    }
-  } catch (e) {
-    console.log("err :", e.message);
-    return next(e);
   }
-});
+);
 
 router.get("/getall", async (req, res) => {
   try {
@@ -94,21 +100,26 @@ router.get("/:ProdId", async (req, res) => {
 });
 
 //delete produt
-router.delete("/delete/:ProductId", async (req, res) => {
-  try {
-    const removedProduct = await Product.deleteOne({
-      _id: req.params.ProductId,
-    });
-    res.status(200).send("deleted");
-    console.log(removedProduct);
-  } catch (err) {
-    res.status(400).send({ message: err });
+router.delete(
+  "/delete/:ProductId",
+  authenticateTokenAdmin,
+  async (req, res) => {
+    try {
+      const removedProduct = await Product.deleteOne({
+        _id: req.params.ProductId,
+      });
+      res.status(200).send("deleted");
+      console.log(removedProduct);
+    } catch (err) {
+      res.status(400).send({ message: err });
+    }
   }
-});
+);
 
 //update product cloudinary
 router.patch(
   "/update/:ProductId",
+  authenticateTokenAdmin,
   Upload.array("files", 6),
   async (req, res) => {
     if (req?.files?.length) {
@@ -174,7 +185,7 @@ router.patch(
   }
 );
 
-router.patch("/rate/:ProductId", async (req, res) => {
+router.patch("/rate/:ProductId",authenticateToken, async (req, res) => {
   try {
     const updatedProduct = await Product.findOneAndUpdate(
       { _id: req.params.ProductId },

@@ -5,8 +5,7 @@ const User = require("../model/User");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const { encode } = require("js-base64");
-
-//Auth
+const authenticateToken = require("../middleware/authenticateToken");
 router.post(
   "/",
   [
@@ -83,7 +82,7 @@ router.post(
     }
   }
 );
-router.patch("/updateUser/:userId", async (req, res) => {
+router.patch("/updateUser/:userId", authenticateToken, async (req, res) => {
   try {
     const updates = {};
 

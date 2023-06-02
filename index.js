@@ -1,10 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const app = express();
-require("dotenv/config");
-const morgan = require("morgan");
+require("dotenv").config();
 const helmet = require("helmet");
-const path = require("path");
 const mongoose = require("mongoose");
 const User = require("./routes/UserRouter");
 const Categorie = require("./routes/CategorieRoute");
@@ -36,23 +34,7 @@ app.use(
     ],
   })
 );
-// app.use(express.static(__dirname + "/public"));
-// app.use("/uploads", express.static("uploads"));
 
-// app.use(express.static("public"));
-// app.use("/uploads", express.static("uploads"));
-
-app.use("/uploads", express.static(path.join(__dirname, "/uploads")));
-if (process.env.NODE_ENV === "development") {
-  app.use(morgan("tiny"));
-}
-
-// if (process.env.NODE_ENV === 'production') {
-//   app.use(express.static(path.join(__dirname, '/client/build')));
-//   app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html')));
-// } else {
-//   app.get('/', (req, res) => { res.send('API is running....'); });
-// }
 
 app.use(helmet());
 app.use("/auth", User);

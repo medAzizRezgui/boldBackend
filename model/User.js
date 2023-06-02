@@ -36,9 +36,13 @@ const userSchema = new mongoose.Schema(
 );
 
 userSchema.methods.generateTokens = function () {
-  return jwt.sign({ _id: this._id, isAdmin: this.isAdmin }, "privateKey", {
-    expiresIn: process.env.JWT_EXP,
-  });
+  return jwt.sign(
+    { _id: this._id, isAdmin: this.isAdmin },
+    process.env.ACCES_TOKEN,
+    {
+      expiresIn: process.env.JWT_EXP,
+    }
+  );
 };
 
 module.exports = mongoose.model("User", userSchema);
