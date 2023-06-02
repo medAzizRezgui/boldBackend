@@ -24,7 +24,6 @@ router.post("/add", Upload.array("files", 6), async (req, res, next) => {
     let multiple = async (path) => await upload(path);
     for (const file of files) {
       const { path } = file;
-      console.log("path", file);
 
       const newPath = await multiple(path);
       urls.push(newPath);
@@ -52,48 +51,21 @@ router.post("/add", Upload.array("files", 6), async (req, res, next) => {
   }
 });
 
-router.post("/AddProd", Upload.array("files", 6), async (req, res) => {
-  let filesArray = [];
-  req.files.forEach((element) => {
-    const file = {
-      originalname: element.originalname,
-    };
-    filesArray.push(file);
-  });
-  console.log(filesArray);
-  const data = new Product({
-    name: req.body.Name,
-    sousCategorie: req.body.SousCategorie,
-    files: filesArray,
-    price: req.body.Price,
-    countInStock: req.body.CountInStock,
-  });
-  try {
-    const savedProduct = await data.save();
-    console.log(savedProduct);
-    res.status(200).send(savedProduct);
-  } catch (err) {
-    console.log(err);
-    res.status(400).send({ err });
-  }
-});
-
 router.get("/getall", async (req, res) => {
   try {
-    // const { page = 1, limit = 12 } = req.query;
-    // const skipCount = (page - 1) * limit;
-
     const productsQuery = Product.find()
-        .populate("sousCategorie", "name")
-        .populate("categorie", "name")
-        // .limit(Number(limit))
-        // .skip(Number(skipCount));
+      .populate("sousCategorie", "name")
+      .populate("categorie", "name");
+
     const limit = 12;
 
     const productsPromise = productsQuery.exec();
     const countPromise = Product.countDocuments().exec();
 
-    const [products, count] = await Promise.all([productsPromise, countPromise]);
+    const [products, count] = await Promise.all([
+      productsPromise,
+      countPromise,
+    ]);
 
     const totalPages = Math.ceil(count / limit);
 
@@ -101,13 +73,12 @@ router.get("/getall", async (req, res) => {
       products,
       // currentPage: page,
       totalPages,
-      totalItems: count
+      totalItems: count,
     });
   } catch (err) {
     res.status(400).send({ err });
   }
 });
-
 
 //get Product by id
 router.get("/:ProdId", async (req, res) => {
@@ -134,8 +105,6 @@ router.delete("/delete/:ProductId", async (req, res) => {
     res.status(400).send({ message: err });
   }
 });
-
-
 
 //update product cloudinary
 router.patch(
@@ -170,7 +139,7 @@ router.patch(
         discount: req.body.discount,
         features: req.body.features ? req.body.features : [],
         sku: req.body.sku,
-        profit:req.body.profit,
+        profit: req.body.profit,
       };
     } else {
       var updates = {
@@ -185,8 +154,7 @@ router.patch(
         discount: req.body.discount,
         features: req.body.features,
         sku: req.body.sku,
-        profit:req.body.profit,
-
+        profit: req.body.profit,
       };
     }
 
@@ -195,13 +163,6 @@ router.patch(
         { _id: req.params.ProductId },
         {
           $set: updates,
-          // $push: {
-          //   rating: {
-          //     rate: req.body.rating.rate,
-          //     name: req.body.rating.name,
-          //     email: req.body.rating.email,
-          //   },
-          // },
         },
         { new: true }
       );
