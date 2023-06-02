@@ -29,6 +29,7 @@ const OrderSchema = new mongoose.Schema(
         item_price: { type: Number, required: true },
         image: { type: String, required: true },
         profit: { type: Number, required: true },
+        id: { type: String, required: true },
       },
     ],
     totalPrice: {
