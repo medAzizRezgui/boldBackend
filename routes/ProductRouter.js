@@ -185,18 +185,18 @@ router.patch(
   }
 );
 
-router.patch("/rate/:ProductId", async (req, res) => {
+router.patch("/rate/:ProductId",authenticateToken, async (req, res) => {
   try {
-    const { rate, name, email } = req.body; // Access the properties directly from req.body
+    const { rating} = req.body;
 
     const updatedProduct = await Product.findOneAndUpdate(
       { _id: req.params.ProductId },
       {
         $push: {
           rating: {
-            rate: rate,
-            name: name,
-            email: email,
+            rate: rating.rate,
+            name: rating.name,
+            email: rating.email,
           },
         },
       },
