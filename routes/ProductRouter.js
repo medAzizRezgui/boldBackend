@@ -185,25 +185,29 @@ router.patch(
   }
 );
 
-router.patch("/rate/:ProductId",authenticateToken, async (req, res) => {
+router.patch("/rate/:ProductId", async (req, res) => {
   try {
+    const { rate, name, email } = req.body; // Access the properties directly from req.body
+
     const updatedProduct = await Product.findOneAndUpdate(
       { _id: req.params.ProductId },
       {
         $push: {
           rating: {
-            rate: req.body.rating.rate,
-            name: req.body.rating.name,
-            email: req.body.rating.email,
+            rate: rate,
+            name: name,
+            email: email,
           },
         },
       },
       { new: true }
     );
+
     res.status(200).json(updatedProduct);
   } catch (err) {
     console.log(err);
     res.status(400).json({ msg: err.message });
   }
 });
+
 module.exports = router;
