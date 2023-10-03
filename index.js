@@ -30,6 +30,7 @@ app.use(
     origin: [
       "http://localhost:3001",
       "http://localhost:3000",
+      "https://e-commercepfe.vercel.app/",
       "https://www.rezgui-aziz.me",
     ],
   })
